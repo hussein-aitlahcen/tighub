@@ -19,5 +19,7 @@
 
 module Main where
 
+import Tighub.CLI
+
 main :: IO ()
-main = putStrLn "Hello, World !"
+main = entryPoint
