@@ -8,6 +8,7 @@ copyright:           "2018 Hussein Ait Lahccen"
 
 dependencies:
 - base >= 4.7 && < 5
+- cmdargs
 
 library:
   source-dirs: src
