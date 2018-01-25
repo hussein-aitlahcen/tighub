@@ -34,7 +34,7 @@ data Command = Pull
              | Status
              deriving (Show, Data)
 
-data Arguments = Arguments { cmd :: Command
+data Arguments = Arguments { cmd    :: Command
                            , remote :: Remote
                            , branch :: Branch
                            }
@@ -49,6 +49,6 @@ defaultArguments = Arguments { cmd = Status
 entryPoint :: IO ()
 entryPoint = go =<< cmdArgs defaultArguments
   where
-    go (Arguments Push r b) = putStrLn $ "push " ++ r ++ "/" ++ b
-    go (Arguments Pull r b) = putStrLn $ "pull " ++ r ++ "/" ++ b
-    go (Arguments Status _ _)= putStrLn "status"
+    go (Arguments Push r b)   = putStrLn $ "push " ++ r ++ "/" ++ b
+    go (Arguments Pull r b)   = putStrLn $ "pull " ++ r ++ "/" ++ b
+    go (Arguments Status _ _) = putStrLn "status"
