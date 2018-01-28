@@ -20,7 +20,8 @@
 module Tighub.CLI.Entry
   (
     run
-  ) where
+  )
+  where
 
 import           Tighub.CLI.Types       (Arguments (..), Command (..),
                                          defaultArguments)
