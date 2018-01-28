@@ -1,4 +1,4 @@
--- Core.hs ---
+-- CLI.hs ---
 
 -- Copyright (C) 2018 Hussein Ait-Lahcen
 
@@ -17,5 +17,21 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-module Tighub.Core where
+{-# LANGUAGE DeriveDataTypeable #-}
 
+module Tighub.CLI.Entry
+  (
+    run
+  ) where
+
+import           Tighub.CLI.Types       (Arguments (..), Command (..),
+                                         defaultArguments)
+
+import           System.Console.CmdArgs (cmdArgs)
+
+run :: IO ()
+run = go =<< cmdArgs defaultArguments
+  where
+    go (Arguments Push r b)   = putStrLn $ "push " ++ r ++ "/" ++ b
+    go (Arguments Pull r b)   = putStrLn $ "pull " ++ r ++ "/" ++ b
+    go (Arguments Status _ _) = putStrLn "status"

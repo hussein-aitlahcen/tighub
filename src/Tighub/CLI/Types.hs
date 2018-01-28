@@ -1,4 +1,4 @@
--- CLI.hs ---
+-- Types.hs ---
 
 -- Copyright (C) 2018 Hussein Ait-Lahcen
 
@@ -19,12 +19,17 @@
 
 {-# LANGUAGE DeriveDataTypeable #-}
 
-module Tighub.CLI
+module Tighub.CLI.Types
   (
-    entryPoint
-  ) where
+    Remote,
+    Branch,
+    Command (..),
+    Arguments (..),
+    defaultArguments
+  )
+  where
 
-import           System.Console.CmdArgs
+import           System.Console.CmdArgs (Data, Typeable)
 
 type Remote = String
 type Branch = String
@@ -45,10 +50,3 @@ defaultArguments = Arguments { cmd = Status
                              , remote = "remote"
                              , branch = "branch"
                              }
-
-entryPoint :: IO ()
-entryPoint = go =<< cmdArgs defaultArguments
-  where
-    go (Arguments Push r b)   = putStrLn $ "push " ++ r ++ "/" ++ b
-    go (Arguments Pull r b)   = putStrLn $ "pull " ++ r ++ "/" ++ b
-    go (Arguments Status _ _) = putStrLn "status"

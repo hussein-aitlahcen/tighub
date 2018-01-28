@@ -19,7 +19,7 @@
 
 module Main where
 
-import Tighub.CLI
+import           Tighub.CLI.Entry (run)
 
 main :: IO ()
-main = entryPoint
+main = run
