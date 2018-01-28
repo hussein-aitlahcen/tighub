@@ -9,6 +9,10 @@ copyright:           "2018 Hussein Ait Lahccen"
 dependencies:
 - base >= 4.7 && < 5
 - cmdargs
+- bytestring
+- text
+- memory
+- cryptonite
 
 library:
   source-dirs: src
