@@ -46,5 +46,9 @@ tests:
     - -with-rtsopts=-N
     - -Wall
     - -Werror
+    - -main-is Spec
     dependencies:
     - tighub
+    - test-framework
+    - test-framework-hunit
+    - HUnit

@@ -17,5 +17,20 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+module Spec
+  (
+    main
+  )
+  where
+
+import           CryptoSpec
+import           Test.Framework
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = defaultMain [Spec.tests]
+
+tests :: Test
+tests = testGroup "tighub"
+  [
+    CryptoSpec.tests
+  ]
