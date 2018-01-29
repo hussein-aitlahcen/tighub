@@ -24,7 +24,8 @@ module Tighub.Core.Crypto
     Key (..),
     IVAES,
     ByteArray,
-    CryptoError,
+    CryptoFailable (..),
+    CryptoError (..),
     ByteString,
     generateSecret,
     generateArray,
@@ -52,23 +53,20 @@ import           Data.ByteString.Base16 (decode, encode)
 generateSecret :: (CRT.MonadRandom m, ByteArray a) => Int -> m (Key a)
 generateSecret = fmap Key . CRT.getRandomBytes
 
-generateArray :: CRT.MonadRandom m => m (Maybe IVAES)
+generateArray :: CRT.MonadRandom m => m (CryptoFailable IVAES)
 generateArray = do
   bytes :: ByteString <- CRT.getRandomBytes $ blockSize (undefined :: AES256)
-  return $ makeIV bytes
+  pure . maybe (CryptoFailed CryptoError_IvSizeInvalid) CryptoPassed $ makeIV bytes
 
-initCipher :: ByteArray a => Key a -> Either CryptoError AES256
-initCipher (Key k) = case cipherInit k of
-  CryptoFailed e -> Left e
-  CryptoPassed a -> Right a
+initCipher :: ByteArray a => Key a -> CryptoFailable AES256
+initCipher (Key k) = cipherInit k
 
-cryptBlock :: ByteArray a => Key a -> IVAES -> a -> Either CryptoError a
-cryptBlock secretKey initIV msg =
-  case initCipher secretKey of
-    Left e  -> Left e
-    Right c -> Right $ ctrCombine c initIV msg
+cryptBlock :: ByteArray a => Key a -> IVAES -> a -> CryptoFailable a
+cryptBlock secretKey initIV msg = doCtrCombine <$> initCipher secretKey
+  where
+    doCtrCombine c = ctrCombine c initIV msg
 
-decryptBlock :: ByteArray a => Key a -> IVAES -> a -> Either CryptoError a
+decryptBlock :: ByteArray a => Key a -> IVAES -> a -> CryptoFailable a
 decryptBlock = cryptBlock
 
 encodeHex :: ByteString -> ByteString
