@@ -16,6 +16,7 @@ dependencies:
 - gitlib-libgit2
 - cryptonite
 - base16-bytestring
+- directory
 
 library:
   source-dirs: src
