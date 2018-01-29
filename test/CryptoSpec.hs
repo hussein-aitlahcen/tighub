@@ -68,4 +68,4 @@ testEncrypt = (@?=) (CryptoPassed "Hello, World !") =<< doTest "Hello, World !"
       (key, array) <- (,) <$> generateSecret 32 <*> generateArray
       pure $ go key msg =<< array
         where
-          go key content array  = decryptBlock key array =<< cryptBlock key array content
+          go key content array = decryptBlock key array =<< cryptBlock key array content
