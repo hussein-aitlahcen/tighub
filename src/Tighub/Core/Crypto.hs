@@ -30,20 +30,24 @@ module Tighub.Core.Crypto
     generateArray,
     initCipher,
     cryptBlock,
-    decryptBlock
+    decryptBlock,
+    encodeHex,
+    decodeHex
   )
   where
 
 
-import           Tighub.Core.Types   (Key (..))
+import           Tighub.Core.Types      (Key (..))
 
-import           Crypto.Cipher.AES   (AES256)
-import           Crypto.Cipher.Types (BlockCipher (..), Cipher (..), IV, makeIV)
-import           Crypto.Error        (CryptoError (..), CryptoFailable (..))
-import qualified Crypto.Random.Types as CRT
+import           Crypto.Cipher.AES      (AES256)
+import           Crypto.Cipher.Types    (BlockCipher (..), Cipher (..), IV,
+                                         makeIV)
+import           Crypto.Error           (CryptoError (..), CryptoFailable (..))
+import qualified Crypto.Random.Types    as CRT
 
-import           Data.ByteArray      (ByteArray)
-import           Data.ByteString     (ByteString)
+import           Data.ByteArray         (ByteArray)
+import           Data.ByteString        (ByteString)
+import           Data.ByteString.Base16 (decode, encode)
 
 generateSecret :: (CRT.MonadRandom m, BlockCipher c, ByteArray a) => c -> Int -> m (Key c a)
 generateSecret _ = fmap Key . CRT.getRandomBytes
@@ -66,3 +70,9 @@ cryptBlock secretKey initIV msg =
 
 decryptBlock :: (BlockCipher c, ByteArray a) => Key c a -> IV c -> a -> Either CryptoError a
 decryptBlock = cryptBlock
+
+encodeHex :: ByteString -> ByteString
+encodeHex = encode
+
+decodeHex :: ByteString -> ByteString
+decodeHex = fst . decode
