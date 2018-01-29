@@ -9,7 +9,7 @@
 -- as published by the Free Software Foundation; either version 3
 -- of the License, or (at your option) any later version.
 
--- This program is distributed in the hope that it will be useful,
+-- This program is distributed in the hope that e useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 -- GNU General Public License for more details.
@@ -22,13 +22,16 @@
 module Tighub.Core.Types
   (
     Key (..),
-    BlockCipher,
-    ByteArray
+    ByteArray,
+    IVAES
   )
   where
 
-import           Crypto.Cipher.Types (BlockCipher)
+import           Crypto.Cipher.AES   (AES256)
+import           Crypto.Cipher.Types (IV)
 import           Data.ByteArray      (ByteArray)
 
-data Key c a where
-  Key :: (BlockCipher c, ByteArray a) => a -> Key c a
+type IVAES = IV AES256
+
+data Key a where
+  Key :: ByteArray a => a -> Key a

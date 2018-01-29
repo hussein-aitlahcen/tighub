@@ -22,7 +22,7 @@
 module Tighub.Core.Crypto
   (
     Key (..),
-    AES256,
+    IVAES,
     ByteArray,
     CryptoError,
     ByteString,
@@ -37,10 +37,10 @@ module Tighub.Core.Crypto
   where
 
 
-import           Tighub.Core.Types      (Key (..))
+import           Tighub.Core.Types      (Key (..), IVAES)
 
 import           Crypto.Cipher.AES      (AES256)
-import           Crypto.Cipher.Types    (BlockCipher (..), Cipher (..), IV,
+import           Crypto.Cipher.Types    (BlockCipher (..), Cipher (..),
                                          makeIV)
 import           Crypto.Error           (CryptoError (..), CryptoFailable (..))
 import qualified Crypto.Random.Types    as CRT
@@ -49,26 +49,26 @@ import           Data.ByteArray         (ByteArray)
 import           Data.ByteString        (ByteString)
 import           Data.ByteString.Base16 (decode, encode)
 
-generateSecret :: (CRT.MonadRandom m, BlockCipher c, ByteArray a) => c -> Int -> m (Key c a)
-generateSecret _ = fmap Key . CRT.getRandomBytes
+generateSecret :: (CRT.MonadRandom m, ByteArray a) => Int -> m (Key a)
+generateSecret = fmap Key . CRT.getRandomBytes
 
-generateArray :: forall m c. (CRT.MonadRandom m, BlockCipher c) => c -> m (Maybe (IV c))
-generateArray _ = do
-  bytes :: ByteString <- CRT.getRandomBytes $ blockSize (undefined :: c)
+generateArray :: CRT.MonadRandom m => m (Maybe IVAES)
+generateArray = do
+  bytes :: ByteString <- CRT.getRandomBytes $ blockSize (undefined :: AES256)
   return $ makeIV bytes
 
-initCipher :: (BlockCipher c, ByteArray a) => Key c a -> Either CryptoError c
+initCipher :: ByteArray a => Key a -> Either CryptoError AES256
 initCipher (Key k) = case cipherInit k of
   CryptoFailed e -> Left e
   CryptoPassed a -> Right a
 
-cryptBlock :: (BlockCipher c, ByteArray a) => Key c a -> IV c -> a -> Either CryptoError a
+cryptBlock :: ByteArray a => Key a -> IVAES -> a -> Either CryptoError a
 cryptBlock secretKey initIV msg =
   case initCipher secretKey of
     Left e  -> Left e
     Right c -> Right $ ctrCombine c initIV msg
 
-decryptBlock :: (BlockCipher c, ByteArray a) => Key c a -> IV c -> a -> Either CryptoError a
+decryptBlock :: ByteArray a => Key a -> IVAES -> a -> Either CryptoError a
 decryptBlock = cryptBlock
 
 encodeHex :: ByteString -> ByteString
